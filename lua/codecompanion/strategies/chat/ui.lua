@@ -355,7 +355,7 @@ function UI:get_tokens(data)
   if self.adapter.features.tokens then
     local tokens = self.adapter.handlers.tokens(self.adapter, data)
     if tokens then
-      print(tokens)
+      -- print(tokens)
       self.tokens = tokens
     end
   end

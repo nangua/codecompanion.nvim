@@ -1,6 +1,9 @@
 local SlashCommands = require("codecompanion.strategies.chat.slash_commands")
 local strategy = require("codecompanion.strategies")
 
+local config = require("codecompanion.config")
+local util = require("codecompanion.utils.util")
+
 local source = {}
 
 function source.new(config)
@@ -72,7 +75,6 @@ end
 ---@param callback function
 ---@return nil
 function source:execute(item, callback)
-  vim.api.nvim_set_current_line("")
   item.Chat = require("codecompanion").buf_get_chat(item.context.bufnr)
 
   if item.from_prompt_library then
@@ -84,6 +86,21 @@ function source:execute(item, callback)
         item.Chat:add_buf_message(prompt)
       end
     end)
+    if
+      item.config
+      and item.config.opts
+      and item.config.opts.adapter
+      and item.config.opts.adapter.name
+      and item.Chat
+      and item.Chat.adapter
+      and item.Chat.adapter.name
+      and item.config.opts.adapter.name ~= item.Chat.adapter.name
+    then
+      item.Chat.adapter = require("codecompanion.adapters").resolve(config.adapters[item.config.opts.adapter.name])
+      util.fire("ChatAdapter", { bufnr = item.Chat.bufnr, adapter = item.Chat.adapter })
+      item.Chat:apply_settings()
+      vim.print("source:execute: ", item)
+    end
   else
     SlashCommands:execute(item)
   end

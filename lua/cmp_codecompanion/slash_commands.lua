@@ -99,7 +99,6 @@ function source:execute(item, callback)
       item.Chat.adapter = require("codecompanion.adapters").resolve(config.adapters[item.config.opts.adapter.name])
       util.fire("ChatAdapter", { bufnr = item.Chat.bufnr, adapter = item.Chat.adapter })
       item.Chat:apply_settings()
-      vim.print("source:execute: ", item)
     end
   else
     SlashCommands:execute(item)
